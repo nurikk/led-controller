@@ -90,7 +90,7 @@ def getUsbTty(rx):
 AVR_BIN_PREFIX = None
 AVRDUDE_CONF = None
 AVR_HOME_DUDE = None
-
+BAUD_RATE = 115200
 if platform == 'darwin':
     # For MacOS X, pick up the AVR tools from within Arduino.app
     ARDUINO_HOME        = resolve_var('ARDUINO_HOME',
@@ -444,6 +444,13 @@ fuse_cmd = '%s %s' % (path.join(path.dirname(AVR_BIN_PREFIX), 'avrdude'),
 
 upload = envArduino.Alias('upload', TARGET + '.hex', [reset_cmd, fuse_cmd])
 AlwaysBuild(upload)
+
+
+#serial monitor
+pipcomOpts = ['--baud %s' % BAUD_RATE, shellquote(ARDUINO_PORT)]
+pipcom_cmd = 'picocom %s' % ' '.join(pipcomOpts)
+picocom = envArduino.Alias('monitor', None, [pipcom_cmd])
+envArduino.AlwaysBuild(picocom)
 
 # Clean build directory
 envArduino.Clean('all', 'build/')
