@@ -7,16 +7,14 @@
 #define MSGEQ7_READINGS 10
 
 
+const uint8_t pinAnalogLeft = A0;
+const uint8_t pinAnalogRight = A0;
+const uint8_t pinReset = 3;
+const uint8_t pinStrobe = 2;
 
-const int pinAnalogLeft = A0;
-const int pinAnalogRight = A0;
-const int pinReset = 3;
-const int pinStrobe = 2;
-
-
-Potentiometer bassPot = Potentiometer(1);
-Potentiometer midPot = Potentiometer(2);
-Potentiometer highPot = Potentiometer(3);
+Potentiometer bassPot = Potentiometer(1, 255);
+Potentiometer midPot = Potentiometer(2, 255);
+Potentiometer highPot = Potentiometer(3, 255);
 
 byte level0[8] = {0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b11111};
 byte level1[8] = {0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b11111, 0b11111};
@@ -38,7 +36,6 @@ const bool DEBUG = true;
 const int redPin = 9;
 const int greenPin = 11;
 const int bluePin = 10;
-
 
 
 LEDFader redFader = LEDFader(redPin);
@@ -111,13 +108,13 @@ void displaySpecrum() {
         lcd.write(currentLeft);
     }
     lcd.setCursor(8, 0);
-    lcd.write(map(1024 - bassPot.getValue(), 0, 1023, 0, 7));
+    lcd.write(map(bassPot.getSector(), 0, 255, 0, 7));
 
     lcd.setCursor(9, 0);
-    lcd.write(map(1024 - midPot.getValue(), 0, 1023, 0, 7));
+    lcd.write(map(midPot.getSector(), 0, 255, 0, 7));
 
     lcd.setCursor(10, 0);
-    lcd.write(map(1024 - highPot.getValue(), 0, 1023, 0, 7));
+    lcd.write(map(highPot.getSector(), 0, 255, 0, 7));
 }
 
 void musicEQ() {
@@ -131,13 +128,13 @@ void musicEQ() {
         uint8_t mid = MSGEQ7.get(MSGEQ7_MID, MSGEQ7_LEFT);
         uint8_t high = MSGEQ7.get(MSGEQ7_HIGH, MSGEQ7_LEFT);
 
-        int minusBass = map(bassPot.getValue(), 0, 1023, 0, 255);
-        int minusMid = map(midPot.getValue(), 0, 1023, 0, 255);
-        int minusHigh = map(highPot.getValue(), 0, 1023, 0, 255);
+        uint8_t minusBass = bassPot.getSector();
+        uint8_t minusMid = midPot.getSector();
+        uint8_t minusHigh = highPot.getSector();
 
-        int r = prepareSignal(bass - minusBass);
-        int g = prepareSignal(mid - minusMid);
-        int b = prepareSignal(high - minusHigh);
+        uint8_t r = prepareSignal(bass - minusBass);
+        uint8_t g = prepareSignal(mid - minusMid);
+        uint8_t b = prepareSignal(high - minusHigh);
 
         displayColor(r, g, b);
         displaySpecrum();
