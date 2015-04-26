@@ -128,9 +128,9 @@ void musicEQ() {
         uint8_t mid = MSGEQ7.get(MSGEQ7_MID, MSGEQ7_LEFT);
         uint8_t high = MSGEQ7.get(MSGEQ7_HIGH, MSGEQ7_LEFT);
 
-        uint8_t minusBass = bassPot.getSector();
-        uint8_t minusMid = midPot.getSector();
-        uint8_t minusHigh = highPot.getSector();
+        uint8_t minusBass = 255 - bassPot.getSector();
+        uint8_t minusMid = 255 - midPot.getSector();
+        uint8_t minusHigh = 255 - highPot.getSector();
 
         uint8_t r = prepareSignal(bass - minusBass);
         uint8_t g = prepareSignal(mid - minusMid);
